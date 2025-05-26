@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using DhcpSharp.Models;
+using System.Net;
 using System.Net.Sockets;
 
 namespace DhcpSharp
@@ -21,7 +22,8 @@ namespace DhcpSharp
                 IPEndPoint remote = new(IPAddress.Any, 0);
                 byte[] data = udp.Receive(ref remote);
 
-                
+                DhcpPacket packet = DhcpPacket.Parse(data);
+                Console.WriteLine(packet.ToString());
             }
         }
     }
