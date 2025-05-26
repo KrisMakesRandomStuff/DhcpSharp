@@ -5,19 +5,24 @@ namespace DhcpSharp
 {
     public class DhcpServer
     {
-        public string Ip { get; set; }
         public int Port { get; set; }
 
-        public DhcpServer(string ip, int port) {
-            this.Ip = ip;
+        public DhcpServer(int port) {
             this.Port = port;
         }
 
         public void Start() {
-            IPEndPoint local = new(IPAddress.Parse(this.Ip), this.Port);
+            IPEndPoint local = new(IPAddress.Any, this.Port);
             UdpClient udp = new(local);
-            
 
+            Console.WriteLine("Server started on port " + this.Port);
+
+            while (true) {
+                IPEndPoint remote = new(IPAddress.Any, 0);
+                byte[] data = udp.Receive(ref remote);
+
+                
+            }
         }
     }
 }

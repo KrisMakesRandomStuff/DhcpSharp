@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            DhcpServer server = new(67);
+            server.Start();
         }
     }
 }
