@@ -1,104 +1,102 @@
 ﻿using System.Net;
 using System.Text;
 
-namespace DhcpSharp.Models
-{
-    public class DhcpPacket
-    {
-        private const int MAIN_PACKET_LENGTH = 236;
+namespace DhcpSharp.Models;
 
-        // Operation Code
-        public byte OpCode { get; set; }
+public class DhcpPacket {
+    private const int MAIN_PACKET_LENGTH = 236;
 
-        // Hardware Type
-        public byte HwType { get; set; }
+    // Operation Code
+    public byte OpCode { get; set; }
 
-        // Hardware address Length
-        public byte HwLen { get; set; }
+    // Hardware Type
+    public byte HwType { get; set; }
 
-        // Hops
-        public byte Hops { get; set; }
+    // Hardware address Length
+    public byte HwLen { get; set; }
 
-        // Transaction id
-        public uint Xid { get; set; }
+    // Hops
+    public byte Hops { get; set; }
 
-        // Seconds
-        public ushort Seconds { get; set; }
+    // Transaction id
+    public uint Xid { get; set; }
 
-        // DHCP flags
-        public ushort Flags { get; set; }
+    // Seconds
+    public ushort Seconds { get; set; }
 
-        // Client Address
-        public uint CiAddr { get; set; }
+    // DHCP flags
+    public ushort Flags { get; set; }
 
-        // "Your" Address
-        public uint YiAddr { get; set; }
+    // Client Address
+    public uint CiAddr { get; set; }
 
-        // Server Address
-        public uint SiAddr { get; set; }
+    // "Your" Address
+    public uint YiAddr { get; set; }
 
-        // Gateway Address
-        public uint GiAddr { get; set; }
+    // Server Address
+    public uint SiAddr { get; set; }
 
-        // Client hardware Address
-        public byte[] ChAddr { get; set; } = new byte[16];
+    // Gateway Address
+    public uint GiAddr { get; set; }
 
-        // Server Name
-        public byte[] Sname { get; set; } = new byte[64];
+    // Client hardware Address
+    public byte[] ChAddr { get; set; } = new byte[16];
 
-        // Boot file
-        public byte[] File { get; set; } = new byte[128];
+    // Server Name
+    public byte[] Sname { get; set; } = new byte[64];
 
-        public uint MagicCookie {  get; set; }
+    // Boot file
+    public byte[] File { get; set; } = new byte[128];
 
-        // Other options
-        public List<byte> Options { get; set; } = new();
+    public uint MagicCookie { get; set; }
 
-        public static DhcpPacket Parse(byte[] raw) {
-            DhcpPacket packet = new();
+    // Other options
+    public List<byte> Options { get; set; } = [];
 
-            using BinaryReader reader = new(new MemoryStream(raw));
+    public static DhcpPacket Parse(byte[] raw) {
+        DhcpPacket packet = new();
 
-            packet.OpCode = reader.ReadByte();
-            packet.HwType = reader.ReadByte();
-            packet.HwLen = reader.ReadByte();
-            packet.Hops = reader.ReadByte();
-            packet.Xid = reader.ReadUInt32();
-            packet.Seconds = reader.ReadUInt16();
-            packet.Flags = reader.ReadUInt16();
+        using BinaryReader reader = new(new MemoryStream(raw));
 
-            packet.CiAddr = reader.ReadUInt32();
-            packet.YiAddr = reader.ReadUInt32();
-            packet.SiAddr = reader.ReadUInt32();
-            packet.GiAddr = reader.ReadUInt32();
-            packet.ChAddr = reader.ReadBytes(16);
+        packet.OpCode = reader.ReadByte();
+        packet.HwType = reader.ReadByte();
+        packet.HwLen = reader.ReadByte();
+        packet.Hops = reader.ReadByte();
+        packet.Xid = reader.ReadUInt32();
+        packet.Seconds = reader.ReadUInt16();
+        packet.Flags = reader.ReadUInt16();
 
-            packet.Sname = reader.ReadBytes(64);
-            packet.File = reader.ReadBytes(128);
-            packet.MagicCookie = reader.ReadUInt32();
-            packet.Options = [.. reader.ReadBytes(raw.Length - MAIN_PACKET_LENGTH)];
+        packet.CiAddr = reader.ReadUInt32();
+        packet.YiAddr = reader.ReadUInt32();
+        packet.SiAddr = reader.ReadUInt32();
+        packet.GiAddr = reader.ReadUInt32();
+        packet.ChAddr = reader.ReadBytes(16);
 
-            return packet;
-        }
+        packet.Sname = reader.ReadBytes(64);
+        packet.File = reader.ReadBytes(128);
+        packet.MagicCookie = reader.ReadUInt32();
+        packet.Options = [.. reader.ReadBytes(raw.Length - MAIN_PACKET_LENGTH)];
 
-        public override string ToString() {
-            return $@"
-OpCode: {OpCode}
-Hardware Type: {HwType}
-Hardware address length: {HwLen}
-Hops: {Hops}
-Transaction id: {Xid}
-Seconds: {Seconds}
-Flags: {(int)(Flags & 1)}
+        return packet;
+    }
+
+    public override string ToString() {
+        return $@"
+OpCode: {this.OpCode}
+Hardware Type: {this.HwType}
+Hardware address length: {this.HwLen}
+Hops: {this.Hops}
+Transaction id: {this.Xid}
+Seconds: {this.Seconds}
+Flags: {(this.Flags >> 31) & 1}
 
 Client addr: {IPAddress.Parse(this.CiAddr.ToString())}
 'Your' addr: {IPAddress.Parse(this.YiAddr.ToString())}
 Server addr: {IPAddress.Parse(this.SiAddr.ToString())}
 Gateway addr: {IPAddress.Parse(this.GiAddr.ToString())}
-Client mac: {ChAddr}
+Client mac: {this.ChAddr}
 
 Server name: '{Encoding.ASCII.GetString(this.Sname)}'
 ";
-        }
     }
 }
