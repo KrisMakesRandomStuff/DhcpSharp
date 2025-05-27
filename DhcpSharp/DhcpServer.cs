@@ -1,4 +1,5 @@
-﻿using DhcpSharp.Models;
+﻿using DhcpSharp.Extensions;
+using DhcpSharp.Models;
 using System.Net;
 using System.Net.Sockets;
 
@@ -21,7 +22,9 @@ public class DhcpServer {
 
             DhcpPacket response = DhcpResponder.Respond(data);
 
-            UdpClient to_client = new(new IPEndPoint(new IPAddress(response.CiAddr), 68));
+            UdpClient to_client = new(new IPEndPoint(IPAddress.Parse("192.168.1.1"), 67));
+            to_client.Connect(new IPEndPoint(new IPAddress(response.CiAddr), 68));
+            to_client.Send(response.ToBytes());
         }
     }
 }

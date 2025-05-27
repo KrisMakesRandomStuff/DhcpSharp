@@ -59,6 +59,18 @@ public static class DhcpOptionExtensions {
                     writer.Write((byte)bytes.Length);
                     writer.Write(bytes);
                     break;
+                case IReadOnlyList<byte> byteList:
+                    writer.Write((byte)byteList.Count);
+                    writer.Write(byteList.ToArray());
+                    break;
+                case IReadOnlyList<IPAddress> ipList:
+                    writer.Write((byte)ipList.Count);
+                    foreach (IPAddress ipAddr in ipList) {
+                        byte[] ipBytes = ipAddr.GetAddressBytes();
+                        writer.Write((byte)ipBytes.Length);
+                        writer.Write(ipBytes);
+                    }
+                    break;
                 default:
                     throw new NotSupportedException($"Property {prop.Name} of type {prop.PropertyType.Name} is not supported");
             }
