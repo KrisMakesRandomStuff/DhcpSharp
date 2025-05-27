@@ -87,7 +87,7 @@ OpCode: {this.OpCode}
 Hardware Type: {this.HwType}
 Hardware address length: {this.HwLen}
 Hops: {this.Hops}
-Transaction id: {this.Xid}
+Transaction id: {this.Xid:X}
 Seconds: {this.Seconds}
 Flags: {this.Flags & (1 << 15)}
 
@@ -95,7 +95,7 @@ Client addr: {IPAddress.Parse(this.CiAddr.ToString())}
 'Your' addr: {IPAddress.Parse(this.YiAddr.ToString())}
 Server addr: {IPAddress.Parse(this.SiAddr.ToString())}
 Gateway addr: {IPAddress.Parse(this.GiAddr.ToString())}
-Client mac: {this.ChAddr}
+Client mac: {Convert.ToHexString(this.ChAddr)}
 
 Server name: '{Encoding.ASCII.GetString(this.Sname)}'
 ";
