@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using DhcpSharp.Extensions;
+using System.Net;
 using System.Text;
 
 namespace DhcpSharp.Models;
@@ -62,7 +63,7 @@ public class DhcpPacket {
         packet.HwType = reader.ReadByte();
         packet.HwLen = reader.ReadByte();
         packet.Hops = reader.ReadByte();
-        packet.Xid = reader.ReadUInt32();
+        packet.Xid = reader.ReadUInt32BE();
         packet.Seconds = reader.ReadUInt16();
         packet.Flags = reader.ReadUInt16();
 
@@ -88,7 +89,7 @@ Hardware address length: {this.HwLen}
 Hops: {this.Hops}
 Transaction id: {this.Xid}
 Seconds: {this.Seconds}
-Flags: {(this.Flags >> 31) & 1}
+Flags: {this.Flags & (1 << 15)}
 
 Client addr: {IPAddress.Parse(this.CiAddr.ToString())}
 'Your' addr: {IPAddress.Parse(this.YiAddr.ToString())}
